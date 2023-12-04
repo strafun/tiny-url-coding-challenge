@@ -18,7 +18,12 @@ return new class extends Migration
             $table->string('name', 80);
             $table->unsignedMediumInteger('price');
             $table->foreign('category_id')->references('id')->on('categories');
-            $table->rawIndex('name(28)','name');
+            // Sqlite does not support prefix indexes
+            if (!app()->runningUnitTests()) {
+                $table->rawIndex('name(28)','name');
+            } else {
+                $table->index('name');
+            }
             $table->index('price', 'price');
         });
 
