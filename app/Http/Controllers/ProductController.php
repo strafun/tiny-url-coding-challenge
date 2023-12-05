@@ -14,7 +14,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Product/CRUDList');
+        $products = Product::select('id', 'name')->orderBy('id')->simpleFastPaginate(config('product.crud_page_size'));
+        return Inertia::render('Product/CRUDList', ['products' => $products]);
     }
 
     /**
