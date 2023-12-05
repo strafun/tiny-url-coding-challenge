@@ -9,7 +9,7 @@ defineProps({ user: Object })
         <Head title="Welcome" />
         <h1>Welcome</h1>
         <p>Coding challenge</p>
-    <Link href="/product-list">Products sort list</Link>
+    <Link href="/product-list/name">Products sort list</Link>
     <br>
     <Link href="/categories/create">Create category</Link>
     <br>

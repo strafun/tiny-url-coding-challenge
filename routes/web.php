@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Homepage');
 Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+Route::get('product-list/{sort?}/{direction?}', \App\Http\Controllers\ProductSortListController::class);
