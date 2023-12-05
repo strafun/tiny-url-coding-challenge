@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
-use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
@@ -14,9 +13,9 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Collection
+    public function index(CategoryService $categoryService): Collection
     {
-        return Category::select(['id', 'title'])->get();
+        return $categoryService->getCached();
     }
 
     /**
