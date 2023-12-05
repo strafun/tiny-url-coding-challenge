@@ -30,4 +30,13 @@ class Product extends Model
     {
         return $this->hasOne(ProductTop::class, 'id', 'id');
     }
+
+    public function archive(): static
+    {
+        $archive = new ProductArchive();
+        $archive->id = $this->id;
+        $archive->product_archive = $this->getAttributes();
+        $archive->save();
+        return $this;
+    }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use Database\Seeders\CategoryCacheSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,6 +14,7 @@ class CategoryTest extends TestCase
     public function test_list_categories(): void
     {
         Category::factory()->create();
+        $this->seed(CategoryCacheSeeder::class);
         $response = $this->get('/categories');
 
         $response->assertStatus(200)->assertJsonStructure([

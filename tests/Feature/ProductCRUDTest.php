@@ -2,12 +2,22 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProductCRUDTest extends TestCase
 {
+    use RefreshDatabase;
     private Model $product;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->product = Product::factory()->create();
+    }
+
     /**
      * A basic feature test example.
      */
@@ -35,10 +45,15 @@ class ProductCRUDTest extends TestCase
 
     public function test_delete_product(): void
     {
+        $this->assertDatabaseCount('products', 1);
+        $this->assertDatabaseCount('products_archive', 0);
 
-        $response = $this->delete('/categories/'  . $this->product->getKey());
+        $response = $this->delete('/products/'  . $this->product->getKey());
 
-        $response->assertStatus(200);
+        $this->assertDatabaseCount('products', 0);
+        $this->assertDatabaseCount('products_archive', 1);
+
+        $response->assertStatus(302)->assertRedirect('/products');
     }
 
 }
