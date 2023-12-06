@@ -42,7 +42,7 @@ Some of the requirements I took from the task description and some have added by
 
 As the result we can create a diagram of our application:
 
-![architecture](https://github.com/strafun/tiny-url-codding-challange/blob/main/arch.png?raw=true)
+![architecture](https://raw.githubusercontent.com/strafun/tiny-url-coding-challenge/master/arch.png)
 
 
 ### Data Storage
