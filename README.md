@@ -7,6 +7,7 @@ Let's divide our work for 5 parts:
 - Data Storage
 - Develop
 - Possible improvements and conclusion
+- How to run
 
 
 ### Gather requirements
@@ -15,8 +16,8 @@ Some of the requirements I took from the task description and some have added by
 
 - Entity `product`. Each product should have name, description, price, category. 
 - We should handle 100 million product records. 
-- We should provide CRUD operations for the Product. Deletion should be `safe` - without real deleting from the database.  
-- We should provide product `listing` with possibility filter by name, price, category ASC and DESC. Show 50 products per page with pagination. 
+- We should provide CRUD operations for the Product. Deletion should be with moving to archive.  
+- We should provide product `listing` with possibility filter by name, price, category ASC and DESC. Show 30 products per page with pagination. 
 - We should be able to mark products as a `top` and show them at the top of the list. There will be around 0.01% of the top products.
 - Entity `product category`. Each category should have a unique name. And let's assume that we have 10 000 categories. 
 - We should be able to add a category.
@@ -31,17 +32,17 @@ Some of the requirements I took from the task description and some have added by
 
 - We will use `Strong Consistency`.
 - We should use `Horizontal and Vertical Scaling`. We have quite high load and from one side our servers should be powerful enough to handle it and from other side we need to have a low latency.
-- We should use `Pull CDN` for the fronend static Vue.js SPA.
 - We will use `Load Balancer` to receive low latency and be able to scale and protect system against fail. 
 - Load balancer will allow to use `active-active fail-over` for the servers
 - We will use Master-Slave DB replication that will separate write from read operations. We will allow manage average DB load with amount of slaves. 
 - We will use DB caching with Redis. 
 - We will use `Cache-aside` caching strategy. It will give us strong consistency.
+- Add a queue for slow operations like read and write on a big tables with a heavy index. 
 - We should add `monitoring` to our infrastructure. 
 
 As the result we can create a diagram of our application:
 
-![architecture](https://github.com/strafun/tiny-url-codding-challange/blob/main/architecture.png?raw=true)
+![architecture](https://github.com/strafun/tiny-url-codding-challange/blob/main/arch.png?raw=true)
 
 
 ### Data Storage
@@ -56,26 +57,54 @@ We need to provide storage only for two instances `Products` and `Categories`. B
 
 #### Mysql as RDBMS
 
-- Create table Products with PK, name, price and category. Create indexes. 
+- Create table Products with PK, name, price and category. Create indexes for the name, price and category as we need make sorting. 
 - Let's assume that category is required and not null - it gives us better performance. 
-- As `description` is the field with the largest memory size, but we need it only on the `product view/edit page` we can move it to the separate table. And use in queries on the page of the product only. 
-- We will have separate table for the top_products. As we are expecting that top products will be less than 0.001% there is no necessary to add them to the products table. 
-- Categories - we will have `categories` table separately but will not use relation for the products table. As we need to sort by category name, we will denormalize the product table and include a category name as text there and add index on it. 
+- `description` is the field with the largest memory size, but we need it only on the `product view/edit page`. We can move it to the separate table. And use in queries on target pages only. 
+- We will have a separate table for the `top products`. As we are expecting that top products will be less than 0.001% there is no necessary to add them to the products table. 
+- For categories, we will use a presorted related table technique. When the related table always sorted by the name. Then in the main table we can sort by foreign key. And we will receive sort by related table name without any join. Wierd solution, but I sow it few time on production and it works. Alternatively we can denormalize the main table, but it makes it quite bigger and the index is even heavier.
 
 #### Redis as In memory NooSql cache solution
  
 What we are planning to cache: 
 
-- Categories - 10 000 records
-- First 5 pages of all types of sorts. We have 6 different one. Statistically, most clients reach only first 5 pages. As we have 50 product on the page we will have 50 * 5 * 6 = 1500 products in cache. 
-- We should include our top products to the cached version pages.
+- Categories - 10 000 records.
+- Top products.
 
 #### Client cookies
 
-We will store last 10 viewed products in the client cookies. In such case we completely avoid any server loads related to this business process in our app. We still can gather visited history for some other our business needs. But even in case when we will have such information on our servers we better to leave this part to the client side. 
+We will store last 10 viewed products in client cookies. In such case we completely avoid any server loads related to this business process in our app. We still can gather visited history for some other our business needs. But even in case when we will have such information in DB, it is better to leave this part on the client side. 
 
 ## Develop
 
-- CRUD will represent 3 pages list, edit/create page and product view. 
-- Search will represent one page. 
-- There is 2 main approaches for the sorting and pagination `Cursor pagination` and `Deferred joins`. Let's compare performance. We will use Cursor pagination in the search page as it should be faster. And Deferred joins in CRUD list page. 
+- CRUD will represent 4 pages list, edit/create page and product view. 
+- Search will represent one page. With top products and last visited blocks.
+- There is 2 main approaches for the sorting and pagination on high volumes `Cursor pagination` and `Deferred joins`. Let's compare performance. We will use Cursor pagination in the search page as it should be faster. And Deferred joins in CRUD list page. 
+
+## Possible improvements and conclusion
+
+### Improvements
+
+- Add unit tests for services and queues.
+- Use `Elasticsearch` layers between server and DB. In such case we can avoid to have strange alphabetic logic for the categories and remove top products from the cache. 
+- Use `Pull CDN` for the fronend static Vue.js SPA.
+- Move the queue to Redis cache.
+
+### Conclusion
+With this task I am trying to deliver my knowledge in the architecture, DB design, and Laravel. Not only resolve the task. 
+
+If you have any question - let me know. 
+
+### How to run
+1. Get this repo
+2. install composer, nodeJs, npm, PHP, MySQL.
+3. Run `composer install`.
+4. Run `cp .env.example .env`
+5. Run `php artisan key:generate`
+6. Run `npm i`.
+7. Run  `php artisan migrate`.
+8. Run `php artisan db:seed` it will create categories and will add them to cache.
+9. Now we need to generate 100 mil of products. You can use my seeder `php artisan db:seed --class=ProductSeeder` in generates 10 mil per one run. I have used parallel runs. Or use your own technique to generate dummy data.
+10. Run queue worker `php artisan queue:work.`
+11. Run laravel server `php artisan serve`.
+12. Build Vite for production `npm run build` or use dev mode `npm run dev`. 
+13. Go to the http://localhost:8000 and enjoy :) 
