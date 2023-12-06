@@ -19,9 +19,11 @@ class ProductTopService
     }
     public function handle(Product $product, bool $isTop): void
     {
-        if ($isTop && empty($product->productTop)) {
-            $product->productTop()->create();
-            $this->addToCache($product);
+        if ($isTop) {
+            if (empty($product->productTop)) {
+                $product->productTop()->create();
+                $this->addToCache($product);
+            }
         } else {
             $product->productTop()->delete();
             $this->removeFromCache($product->getKey());

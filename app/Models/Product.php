@@ -14,13 +14,13 @@ class Product extends Model implements Cacheable
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'category_id', 'isTop', 'description', 'price'];
+    protected $fillable = ['name', 'category_id', 'price'];
 
     protected function price(): Attribute
     {
         return Attribute::make(
             get: fn (string $value) => $value / 100,
-            set: fn (string $value) => floor($value) . (round($value, 2) - floor($value)),
+            set: fn (string $value) => number_format($value, 2, thousands_separator: '') * 100,
         );
     }
 

@@ -5,13 +5,12 @@ namespace App\Jobs;
 use App\Models\Product;
 use App\Services\ProductTopService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CreateProduct implements ShouldQueue
+class SaveProduct implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -27,8 +26,8 @@ class CreateProduct implements ShouldQueue
     public function handle(ProductTopService $productTopService): void
     {
         $this->product->fill($this->attributes)->save();
-        $this->product->productDetails()->updateOrCreate(['description' => $this->attributes->description]);
+        $this->product->productDetails()->updateOrCreate(['description' => $this->attributes['description']]);
 
-        $productTopService->handle($this->product, $this->attributes->isTop);
+        $productTopService->handle($this->product, $this->attributes['isTop']);
     }
 }
