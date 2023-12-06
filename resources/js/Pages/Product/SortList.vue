@@ -12,39 +12,40 @@ defineProps(
     {
         products: Object,
         sort: String,
-        categories: Array,
-        topProducts: Array
+        categories: Object,
+        topProducts: Object
     }
 )
 </script>
 
 <template>
+    <h1 class="text-3xl font-bold underline mb-2">Catalog:</h1>
     <h2>Top products:</h2>
-    <li class="product" v-for="topProduct in topProducts">
-        <Link :href="'/products/' + topProduct.id">Name: {{ topProduct.name }}</Link>
-        <span class="product-price">Price: {{ topProduct.price }}</span>
-    </li>
-    <h2>Catalog:</h2>
-    <div class="sort-action-links">
-        <Link :href="'/product-list/name' + (sort === 'name' ? '/desc' : '')">Sort By Name</Link>
-        <Link :href="'/product-list/price' + (sort === 'price' ? '/desc' : '')">Sort By Price</Link>
-        <Link :href="'/product-list/category' + (sort === 'category' ? '/desc' : '')">Sort By Category</Link>
+    <div class="flex mb-4" v-for="topProduct in topProducts">
+        <Link class="w-1/2 h-12" :href="'/products/' + topProduct.id">{{ topProduct.name }}</Link>
+        <span class="w-1/2 h-12">Price: {{ topProduct.price }}</span>
+    </div>
+
+    <div class="flex text-sky-400">
+        <Link class="w-1/3 h-12" :href="'/product-list/name' + (sort === 'name' ? '/desc' : '')">Sort By Name</Link>
+        <Link class="w-1/3 h-12" :href="'/product-list/category' + (sort === 'category' ? '/desc' : '')">Sort By Category</Link>
+        <Link class="w-1/3 h-12" :href="'/product-list/price' + (sort === 'price' ? '/desc' : '')">Sort By Price</Link>
     </div>
 
 
-    <li class="product" v-for="product in products.data">
-        <Link :href="'/products/' + product.id">Name: {{ product.name }}</Link>
-        <span class="product-price">Category: {{ categories[product.category_id].title }}</span>
-        <span class="product-price">Price: {{ product.price }}</span>
+    <li class="flex mb-4" v-for="product in products.data">
+        <Link class="w-1/3 h-12" :href="'/products/' + product.id">{{ product.name }}</Link>
+        <span class="w-1/3 h-12">Category: {{ categories[product.category_id].title }}</span>
+        <span class="w-1/3 h-12">Price: {{ product.price }}</span>
     </li>
-    <div class="pagination">
+    <div class="pagination mb-4 text-sky-400">
         <Link :href="products.next_page_url">NextPage</Link>
     </div>
     <div class="last-10-viewed" v-if="last10Visited.length">
         <h2>Last 10 viewed:</h2>
-        <li class="last-10-viewed" v-for="product in last10Visited">
-            <Link :href="'/products/' + product.id">Name: {{ product.name }}</Link>
-        </li>
+        <div class="flex mb-4" v-for="product in last10Visited">
+            <Link class="w-full" :href="'/products/' + product.id">{{ product.name }}</Link>
+        </div>
     </div>
 </template>
 
