@@ -32,9 +32,9 @@ export default {
 
 
 <template>
-    <h3>{{ product.name }}</h3>
+    <h1 class="text-3xl font-bold underline">{{ product.name }}</h1>
     <p>{{ product.productDetails?.description }}</p>
-    <span>{{ product.price }}</span>
+    <span>Price: {{ product.price }}</span>
 </template>
 
 <style scoped>

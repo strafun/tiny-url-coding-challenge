@@ -1,18 +1,9 @@
 <script setup>
-import { Head } from '@inertiajs/vue3'
-import { Link } from "@inertiajs/vue3"
-
-defineProps({ user: Object })
+    import {Head} from '@inertiajs/vue3'
 </script>
 
 <template>
-        <Head title="Welcome" />
-        <h1>Welcome</h1>
-        <p>Coding challenge</p>
-    <Link href="/product-list/name">Products sort list</Link>
-    <br>
-    <Link href="/categories/create">Create category</Link>
-    <br>
-    <Link href="/products">Products</Link>
-    <br>
+    <Head title="Welcome"/>
+    <h1 class="text-3xl font-bold underline">Welcome</h1>
+    <p>To the coding challenge</p>
 </template>
