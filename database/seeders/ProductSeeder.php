@@ -13,7 +13,7 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($j = 0; $j < 10; $j++) {
+        for ($j = 0; $j < 20; $j++) {
             $dummyProducts = [];
 
             for ($i = 0; $i < 1000000; $i++) {
@@ -21,7 +21,6 @@ class ProductSeeder extends Seeder
                 $dummyProducts[$i]['name'] = fake()->words(rand(1, 5), true);
                 $dummyProducts[$i]['price'] = rand(112, 1000000);
             }
-
 
             $chunk_data = array_chunk($dummyProducts, 20000);
             foreach ($chunk_data as $chunk_data_val) {
