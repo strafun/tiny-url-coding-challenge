@@ -11,7 +11,7 @@ trait DataCache
     abstract private function getCacheKey(): string;
     public function getCached(): Collection
     {
-        return Cache::get($this->getCacheKey(), []);
+        return collect(Cache::get($this->getCacheKey(), []));
     }
 
     private function addToCache(Cacheable $model): void

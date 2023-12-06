@@ -6,6 +6,7 @@ use App\Enums\SortingDirection;
 use App\Enums\SortingFields;
 use App\Services\CategoryService;
 use App\Services\ProductSortListService;
+use App\Services\ProductTopService;
 use Inertia\Inertia;
 
 class ProductSortListController extends Controller
@@ -13,6 +14,7 @@ class ProductSortListController extends Controller
     public function __invoke(
         ProductSortListService $productSortListService,
         CategoryService $categoryService,
+        ProductTopService $productTopService,
         ?SortingFields $sort = SortingFields::NAME,
         ?SortingDirection $direction = SortingDirection::ASC,
 
@@ -26,6 +28,7 @@ class ProductSortListController extends Controller
             [
                 'products' => $products,
                 'categories' => $categories,
+                'topProducts' => $productTopService->getCached(),
                 'sort' => $sort->value . $direction->value
             ]
         );

@@ -12,17 +12,26 @@ defineProps(
     {
         products: Object,
         sort: String,
-        categories: Array
+        categories: Array,
+        topProducts: Array
     }
 )
 </script>
 
 <template>
+    <h2>Top products:</h2>
+    <li class="product" v-for="topProduct in topProducts">
+        <Link :href="'/products/' + topProduct.id">Name: {{ topProduct.name }}</Link>
+        <span class="product-price">Price: {{ topProduct.price }}</span>
+    </li>
+    <h2>Catalog:</h2>
     <div class="sort-action-links">
         <Link :href="'/product-list/name' + (sort === 'name' ? '/desc' : '')">Sort By Name</Link>
         <Link :href="'/product-list/price' + (sort === 'price' ? '/desc' : '')">Sort By Price</Link>
         <Link :href="'/product-list/category' + (sort === 'category' ? '/desc' : '')">Sort By Category</Link>
     </div>
+
+
     <li class="product" v-for="product in products.data">
         <Link :href="'/products/' + product.id">Name: {{ product.name }}</Link>
         <span class="product-price">Category: {{ categories[product.category_id].title }}</span>
