@@ -1,12 +1,12 @@
 <script setup>
 import {Link} from '@inertiajs/vue3'
-import {useCookies} from 'vue3-cookies';
+import {useCookies} from 'vue3-cookies'
 
-const {cookies} = useCookies();
-const last10VisitedCookies = cookies.isKey("last-10-visited")
-    ? cookies.get("last-10-visited")
-    : '[]';
-let last10Visited = JSON.parse(last10VisitedCookies);
+const {cookies} = useCookies()
+const last10VisitedCookies = cookies.isKey('last-10-visited')
+    ? cookies.get('last-10-visited')
+    : '[]'
+let last10Visited = JSON.parse(last10VisitedCookies)
 
 defineProps(
     {

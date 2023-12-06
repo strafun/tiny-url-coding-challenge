@@ -13,7 +13,7 @@ defineProps(
     <Link href="/products/create">Create Product</Link>
     <li v-for="product in products.data">
         <Link :href="'/products/' + product.id">{{ product.name }}</Link>
-        <Link :href="'/products/edit/' + product.id">Edit</Link>
+        <Link :href="'/products/' + product.id +  '/edit'">Edit</Link>
         <Link :href="'/products/' + product.id" method="delete" as="button" type="button">Delete</Link>
     </li>
     <div class="pagination">

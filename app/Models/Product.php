@@ -17,7 +17,7 @@ class Product extends Model
     {
         return Attribute::make(
             get: fn (string $value) => $value / 100,
-            set: fn (string $value) => $value * 100,
+            set: fn (string $value) => floor($value) . (round($value, 2) - floor($value)),
         );
     }
 

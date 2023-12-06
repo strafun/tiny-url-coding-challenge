@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Services\CategoryService;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -13,7 +14,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): \Inertia\Response
     {
         $products = Product::select('id', 'name')->orderBy('id')->simpleFastPaginate(config('product.crud_page_size'));
         return Inertia::render('Product/CRUDList', ['products' => $products]);
@@ -22,23 +23,26 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(CategoryService $categoryService): \Inertia\Response
     {
-        //
+        return Inertia::render('Product/Form', [
+            'product' => new Product(),
+            'categories' => $categoryService->getCached(),
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse|\Illuminate\Contracts\Foundation\Application
     {
-        //
+        return redirect('/products');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Product $product): \Inertia\Response
     {
         return Inertia::render('Product/View',
             [
@@ -50,17 +54,20 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(Product $product, CategoryService $categoryService): \Inertia\Response
     {
-        //
+        return Inertia::render('Product/Form', [
+            'product' => $product,
+            'categories' => $categoryService->getCached(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse|\Illuminate\Contracts\Foundation\Application
     {
-        //
+        return redirect('/products');
     }
 
     /**
