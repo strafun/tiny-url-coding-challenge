@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
+use App\Jobs\CreateProduct;
 use App\Models\Product;
 use App\Services\CategoryService;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +38,8 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse|\Illuminate\Contracts\Foundation\Application
     {
+        CreateProduct::dispatch(new Product(), $request->all());
+
         return redirect('/products');
     }
 
@@ -46,7 +50,7 @@ class ProductController extends Controller
     {
         return Inertia::render('Product/View',
             [
-                'product' => $product->load(['productDetails', 'productTop']),
+                'product' => new ProductResource($product->load(['productDetails', 'productTop'])),
             ]
         );
     }
@@ -57,7 +61,7 @@ class ProductController extends Controller
     public function edit(Product $product, CategoryService $categoryService): \Inertia\Response
     {
         return Inertia::render('Product/Form', [
-            'product' => $product,
+            'product' => new ProductResource($product),
             'categories' => $categoryService->getCached(),
         ]);
     }
@@ -67,6 +71,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse|\Illuminate\Contracts\Foundation\Application
     {
+        CreateProduct::dispatch($product, $request->all());
         return redirect('/products');
     }
 
